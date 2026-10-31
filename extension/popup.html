@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Reply Assistant</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <h1>AI Reply Assistant</h1>
+    <p id="siteStatus" class="muted"></p>
+  </header>
+
+  <section>
+    <h2>1. Read the ticket</h2>
+    <div class="row">
+      <button id="readTicket" class="primary">Read ticket</button>
+      <button id="readSelection">Read selected text</button>
+    </div>
+    <p class="muted small">Only what is loaded on the page is read. Scroll up and expand older messages first. “Read selected text” uses whatever you have highlighted.</p>
+    <div id="warnings" class="notice warn" hidden></div>
+    <div id="error" class="notice error" hidden></div>
+  </section>
+
+  <section id="reviewSection" hidden>
+    <h2>2. Review what will be sent</h2>
+    <label>Subject <input id="subject" type="text" /></label>
+    <div class="row">
+      <label class="grow">Channel
+        <select id="channel">
+          <option value="email">Email ticket</option>
+          <option value="chat">Live chat (extraction unverified)</option>
+        </select>
+      </label>
+      <label class="grow">Your name (for sign-off) <input id="agentName" type="text" /></label>
+    </div>
+    <p class="muted small">Untick anything that should not be sent. Fix a role if it is wrong. Expand a message to trim its text.</p>
+    <div id="messages"></div>
+    <label class="check"><input id="includeNotes" type="checkbox" /> Include internal notes as background (the AI is told never to reveal them)</label>
+    <label class="check"><input id="redact" type="checkbox" checked /> Replace emails and phone numbers with placeholders before sending</label>
+  </section>
+
+  <section id="generateSection" hidden>
+    <h2>3. Add your notes</h2>
+    <label>Resolution notes or instructions (treated as facts)
+      <textarea id="agentNotes" rows="3" placeholder="e.g. Refund approved; expected within 5 business days."></textarea>
+    </label>
+    <button id="generate" class="primary">Generate reply</button>
+    <p id="status" class="muted small"></p>
+  </section>
+
+  <section id="draftSection" hidden>
+    <h2>4. Edit and copy</h2>
+    <textarea id="draft" rows="12"></textarea>
+    <div class="row">
+      <button id="copy" class="primary">Copy draft</button>
+      <button id="regenerate">Regenerate</button>
+    </div>
+    <div id="agentFlags" class="notice info" hidden></div>
+    <p class="muted small">Paste it into Freshdesk yourself, check it, and send it manually. This extension never types into or sends from Freshdesk.</p>
+  </section>
+
+  <details>
+    <summary>Settings</summary>
+    <label>Backend URL <input id="backendUrl" type="url" placeholder="http://localhost:3000" /></label>
+    <label>Extension token <input id="token" type="password" autocomplete="off" /></label>
+    <label>Allowed Freshdesk hostnames (one per line, e.g. acme.freshdesk.com or *.example.com)
+      <textarea id="domains" rows="3"></textarea>
+    </label>
+    <div class="row">
+      <button id="saveSettings">Save settings</button>
+      <button id="addCurrentSite">Add current site</button>
+    </div>
+    <p id="settingsStatus" class="muted small"></p>
+  </details>
+
+  <details>
+    <summary>Developer tools (verify extraction)</summary>
+    <p class="muted small">These show counts and page structure, never ticket text.</p>
+    <div class="row">
+      <button id="diagnose">Run diagnostics</button>
+    </div>
+    <label>Test a CSS selector <input id="testSel" type="text" placeholder=".some-class" /></label>
+    <button id="testSelBtn">Test selector</button>
+    <label>Export structure of (CSS selector, blank = whole page)
+      <input id="outlineRoot" type="text" placeholder="optional" />
+    </label>
+    <button id="outlineBtn">Export text-free page structure</button>
+    <pre id="devOut" hidden></pre>
+    <button id="copyDev" hidden>Copy output</button>
+  </details>
+
+  <script src="selectors.config.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
